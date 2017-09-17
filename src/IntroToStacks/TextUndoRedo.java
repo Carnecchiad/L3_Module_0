@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.util.Stack;
 
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 import javax.xml.soap.Text;
 
 public class TextUndoRedo implements ActionListener,KeyListener{
@@ -13,6 +14,8 @@ public class TextUndoRedo implements ActionListener,KeyListener{
 	JPanel panel = new JPanel();
 	JLabel label = new JLabel();
 	String text = "";
+	Stack<String> chars = new Stack<String>();
+
 
 //
 // Choose a key to be the Undo key. Make it so that when that key is
@@ -20,8 +23,6 @@ public class TextUndoRedo implements ActionListener,KeyListener{
 // JLabel.
 	
 	TextUndoRedo() {
-		Stack<Character> characters = new Stack<Character>();
-		
 		frame.add(panel);
 		frame.addKeyListener(this);
 		panel.add(label);
@@ -51,11 +52,20 @@ public class TextUndoRedo implements ActionListener,KeyListener{
 
 	
 	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() != 37) {
 		text+=(char)(e.getKeyCode());
 		label.setText(text);
-		if(e.getKeyCode() == 8){
-			text.substring(0,text.length()-1);
 		}
+		if(e.getKeyCode() == 8){
+			chars.push(text.substring(text.length()-2));
+			text = text.substring(0,text.length()-2);
+			label.setText(text);
+		}
+		if(e.getKeyCode() == 37) {
+			text+=chars.pop();
+		
+		}
+		label.setText(text);
 	}
 
 	@Override
